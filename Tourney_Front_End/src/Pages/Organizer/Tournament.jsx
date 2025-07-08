@@ -11,7 +11,7 @@ import Settings from './Settings';
 import Fixtures from './Fixtures';
 
 
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 
@@ -30,6 +30,7 @@ const Tournament = () => {
   const { backend_URL, fetchTournamentDetails, tournament, isOrganizerLoggedIn } = useContext(OrganizerContext);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   //   useEffect(()=>{
   //   if (!isOrganizerLoggedIn) {
@@ -192,7 +193,23 @@ _id : "68682f5e643f91a48cb952b1"
             <button
               key={item.id}
               className={`tournament-nav-item ${activeTab === item.id ? 'tournament-nav-active' : ''}`}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => {
+                if (item.id === 'fixtures') {
+                  console.log('Navigating to Fixtures tab');
+                  const params = new URLSearchParams(location.search);
+                  let eventId = params.get('eventId');
+                  if (!eventId && tournament?.events && tournament.events.length > 0) {
+                    const firstEvent = tournament.events[0];
+                    console.log('No eventId in query, defaulting to first event', firstEvent);
+                    eventId = typeof firstEvent === 'string' ? firstEvent : firstEvent?._id;
+                  }
+                  const query = eventId ? `?eventId=${eventId}` : '';
+                  navigate({ search: query }, { replace: false });
+                  setActiveTab('fixtures');
+                } else {
+                  setActiveTab(item.id);
+                }
+              }}
             >
               {item.label}
             </button>

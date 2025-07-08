@@ -70,7 +70,7 @@ const TournamentBracket = () => {
         setLoadError(true);
       }
     })();
-  }, [tid]);
+  }, [tid, eventId]);
 
   // Fetch fixtures and build bracket structure (runs after participants are loaded)
   useEffect(() => {
@@ -138,7 +138,7 @@ const TournamentBracket = () => {
         console.error('Failed to load fixtures', err);
       }
     })();
-  }, [tid, participants]);
+  }, [tid, participants, eventId]);
 
   // Helpers
   const getRoundName = (roundNum, totalRounds) => {
